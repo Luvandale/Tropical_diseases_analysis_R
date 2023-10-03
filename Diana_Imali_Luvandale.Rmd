@@ -1,0 +1,305 @@
+---
+title: "Cema Internship Task"
+author: "Diana Imali Luvandale"
+date: "2023-07-20"
+output: html_document
+---
+
+## About the project
+*The dataset used for this task contains monthly data for children <5 years, disaggregated at a county level for the period January 2021 to June 2023. This document will contain exploratory data analysis, a research question and analysis to address the mentioned hypothesis.*
+
+
+**The markdown is arranged in the following order**
+
+- Data preprocessing/preparation that involves data cleaning, exploration of data ie finding missing values etc
+
+- Exploratory analysis (finding answers to basic questions ie county with the highest no of diarrhoea cases etc)
+
+- Research question --> Does the county with the highest deworming numbers have the lowest diarrhea cases?
+
+- Summary/Recommendations
+
+## Data preprocessing
+
+
+```{r}
+#loading the necessary libraries
+
+library(tidyverse)
+library(readr)
+
+#reading of data in csv format
+data1 <- read_csv("https://raw.githubusercontent.com/cema-uonbi/internship_task/main/data/cema_internship_task_2023.csv")
+#getting the first 5 data rows 
+head(data1,5)
+
+```
+
+
+````{r}
+#checking the dimensions of the dataset(no of rows and columns)
+dim(data1)
+#the data has 1410 rows and 11 columns
+
+#checking the attributes of the dataset
+attributes(data1)
+
+# checking the summary of the dataset
+summary(data1)
+````
+
+**checking the datatypes/descriptions of columns**
+````{r}
+# all the columns except of period and country are doubles whereas the two are characters
+sapply(data1, typeof)
+
+#checking the no of missing values in each column
+colSums(is.na(data1)) #we have 4 columns with missing values
+
+````
+
+## Exploratory data analysis (EDA)
+
+**Total number of dewormed children across the counties**
+```{r}
+ggplot(data1, aes(x = county, y =`Total Dewormed`)) +   
+  geom_bar(stat = "identity") +  coord_flip()
+```
+
+**Nairobi has the highest number of dewormed children whereas Lamu has the lowest**
+````{r}
+#county with the highest number of dewormed children
+sum(data1[which(data1$county=='Nairobi County'), 3])
+
+#county with the lowest number of dewormed children
+sum(data1[which(data1$county=='Lamu County'), 3])
+
+````
+*One can recommend assigning of more deworming services in Lamu or more sensitization on the same*
+
+**Total number of diarrhoea cases across the counties**
+```{r}
+ggplot(data1, aes(x = county, y =`diarrhoea cases`)) +   
+  geom_bar(stat = "identity") +  coord_flip()
+```
+
+
+**Nairobi has the highest number of diarrhea cases while Vhiga has the lowest**
+````{r}
+#county with the highest number of dewormed children
+sum(data1[which(data1$county=='Nairobi County'), 8])
+
+#county with the lowest number of dewormed children
+sum(data1[which(data1$county=='Vihiga County'), 8])
+
+````
+
+
+**Wajir county has the highest number of acute malnutrition cases**
+```{r}
+ggplot(data1, aes(x=reorder(county, `Acute Malnutrition`), y=`Acute Malnutrition`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="Acute Malnutrition")+
+  coord_flip() # flip our graph
+```
+
+**Nairobi has the highest no of kids with stunted growth between 6-23months**
+```{r}
+#county vs stunted growth 6-23 months
+ggplot(data1, aes(x=reorder(county, +`stunted 6-23 months`), y=`stunted 6-23 months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="stunted 6-23 months")+
+  coord_flip()
+```
+
+**Nairobi still has the highest number of children with stunted growth for 0<6 months**
+```{r}
+#county vs stunted growth 0<6 months
+ggplot(data1, aes(x=reorder(county, +`stunted 0-<6 months`), y=`stunted 0-<6 months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="stunted 0-<6 months")+
+  coord_flip()
+```
+
+**Turkana county has the highest no of children stunted 24-59 months** 
+```{r}
+#county vs stunted 24-59 months
+ggplot(data1, aes(x=reorder(county, +`stunted 24-59 months`), y=`stunted 24-59 months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="stunted 24-59 months")+
+  coord_flip()
+```
+
+**Nairobi county has the highest number of children underweight 0<6 months**
+```{r}
+#county vs underweight 0<6 months
+ggplot(data1, aes(x=reorder(county, +`Underweight 0-<6 months`), y=`Underweight 0-<6 months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="Underweight 0-<6 months")+
+  coord_flip()
+```
+
+**Nairobi still has the highest number of underweight children 6-23 months**
+```{r}
+#county vs underweight 6-23months
+ggplot(data1, aes(x=reorder(county, +`Underweight 6-23 months`), y=`Underweight 6-23 months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="Underweight 6-23 months")+
+  coord_flip()
+```
+
+**Turkana county has the highest number of underweight children between 24-59 months**
+```{r}
+#county vs underweight 24 -59 months
+ggplot(data1, aes(x=reorder(county, +`Underweight 24-59 Months`), y=`Underweight 24-59 Months`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="county", y="Underweight 24-59 Months")+
+  coord_flip()
+```
+
+
+**May 2023 had the highest number of diarrhoea cases**
+```{r}
+#period vs diarhhoea cases
+ggplot(data1, aes(x=reorder(period, +`diarrhoea cases`), y=`diarrhoea cases`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="period", y="diarrhoea cases")+
+  coord_flip()
+```
+
+**November 2022 had the highest no of dewormed cases**
+```{r}
+#period vs diarhhoea cases
+ggplot(data1, aes(x=reorder(period, +`Total Dewormed`), y=`Total Dewormed`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="period", y="Total Dewormed")+
+  coord_flip()
+```
+
+**March 2023 has the highest number of acute malnutrition cases**
+```{r}
+#period vs acute malnutrition
+ggplot(data1, aes(x=reorder(period, +`Acute Malnutrition`), y=`Acute Malnutrition`))+ # reorder function used here.
+  geom_col()+
+  theme_bw()+
+  labs(x="period", y="Acute Malnutrition")+
+  coord_flip()
+```
+
+
+checking outliers on acute malnutrition vs stunted 6-23months
+```{r}
+ggplot() + geom_boxplot(data = data1,aes(x= `Acute Malnutrition`,y=`stunted 6-23 months`,group = 1),outlier.colour = "red")
+
+#we can see no form of correlation between the two
+plot(x=data1$`Acute Malnutrition`,y=data1$`stunted 6-23 months`,type = 'p', col ="blue")
+
+```
+
+*Densely populated malnutrition range with higher counts are between 0-750 then we proceed seeing outliers*
+```{r}
+ggplot(data1, aes(`Acute Malnutrition`)) + theme_bw() +
+  geom_histogram(fill = "blue", color = "black",bins = 20)+
+  labs() #
+```
+
+
+
+## Research question
+*Does the county with the highest deworming numbers have the lowest diarrhea cases?* 
+
+```{r}
+# Load dplyr
+library(dplyr)
+
+# Group by sum using dplyr
+dcount <- data1 %>% group_by(county) %>% 
+  summarise(sum_deworm = sum(`Total Dewormed`),
+            .groups = 'drop')
+print(dcount, n=47)
+
+
+
+# Convert tibble to df
+df2 <- dcount %>% as.data.frame()
+df2
+
+#arrange them in a descending order
+df5 <- df2[order(-df2$sum_deworm),]
+df5
+```
+
+**checking the no of diarrhea cases**
+```{r}
+# Load dplyr
+library(dplyr)
+
+# Group by sum using dplyr
+dcountd <- data1 %>% group_by(county) %>% 
+  summarise(sum_diarrhoea = sum(`diarrhoea cases`),
+            .groups = 'drop')
+print(dcountd, n=47)
+
+
+
+# Convert tibble to df
+df3 <- dcountd %>% as.data.frame()
+df3 
+
+#arrange in descending order
+df4 <- df3[order(-df3$sum_diarrhoea),]
+df4
+```
+
+*We can still see that Nairobi has the highest number of diarrhea cases so it does not necessarily mean that the more children dewormed the lower the no of diarrhea cases. Nairobi could have more people hence the output or other factors that is not dewormming affecting the no of diarrhea cases*
+
+## Scatter plot
+
+*There is some correlation between deworming and diarrhoea but this does not necessarily mean deworming could cause diarrhoea because correlation is not causation*
+```{r}
+plot(x=data1$`Total Dewormed`,y=data1$`diarrhoea cases`,type = 'p', col ="red")
+```
+
+## Summary/Recommendations
+**Nairobi has the highest number of dewormed children whereas Lamu has the lowest**
+*One can recommend assigning of more deworming services in Lamu or more sensitization on the same*
+
+**Nairobi has the highest number of diarrhea cases while Lamu has the lowest**
+*More diarrhoea prevention and treatment measures should be taken in Nairobi*
+
+**Wajir county has the highest number of acute malnutrition cases**
+*Wajir could need more nutritionists to advise on the kids diets and probably food support*
+
+**March 2023 has the highest number of acute malnutrition cases**
+*More research could be done on the month of March 2023 to find what factors led to this*
+
+**May 2023 had the highest number of diarrhoea cases**
+*More research could be done on the month of May 2023to find what factors led to this*
+
+**Nairobi has the highest no of kids with stunted growth between 6-23months and stunted growth for 0<6 months**
+*More research could be done to understand the root cause and factors that lead to this*
+
+**Turkana county has the highest no of stunted and underweight children 24-59 months ** 
+*Turkana could need more nutritionists to advise on the kids diets and probably food support*
+
+**Nairobi county has the highest number of children underweight 0<6 months and underweight children 6-23 months**
+
+
+
+
+
+
+
+
+
+
+
